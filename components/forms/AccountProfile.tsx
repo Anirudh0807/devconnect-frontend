@@ -9,17 +9,16 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { isBase64Image } from "@/lib/utils";
+import { UploadButton } from "@/lib/uploadthing";
 import { UserValidation } from "@/lib/validations/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "../ui/textarea";
-import { useUploadThing } from "@/lib/uploadthing";
 import { updateUser } from "@/lib/actions/user.actions";
-import { usePathname,useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 interface Props {
   user: {
     id: string;
@@ -33,9 +32,8 @@ interface Props {
 }
 
 const AccountProfile = ({ user, btnTitle }: Props) => {
-  const [files, setFiles] = useState<File[]>([]);
-  const { startUpload } = useUploadThing("media");
-  const router =  useRouter();
+  const [files, setFiles] = useState("");
+  const router = useRouter();
   const pathname = usePathname();
 
   const form = useForm({
@@ -48,58 +46,48 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     },
   });
 
-  const handleImage = (
-    e: ChangeEvent<HTMLInputElement>,
-    fieldChange: (value: string) => void
-  ) => {
-    e.preventDefault();
+  // const handleImage = (
+  //   e: ChangeEvent<HTMLInputElement>,
+  //   fieldChange: (value: string) => void
+  // ) => {
+  //   e.preventDefault();
 
-    const fileReader = new FileReader();
+  //   const fileReader = new FileReader();
 
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setFiles(Array.from(e.target.files));
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     const file = e.target.files[0];
+  //     setFiles(Array.from(e.target.files));
 
-      if (!file.type.includes("image")) return;
+  //     if (!file.type.includes("image")) return;
 
-      fileReader.onload = async (event) => {
-        const imageDataUrl = event.target?.result?.toString() || "";
-        fieldChange(imageDataUrl);
-      };
+  //     fileReader.onload = async (event) => {
+  //       const imageDataUrl = event.target?.result?.toString() || "";
+  //       fieldChange(imageDataUrl);
+  //     };
 
-      fileReader.readAsDataURL(file);
-    }
-  };
+  //     fileReader.readAsDataURL(file);
+  //   }
+  // };
 
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
-    const blob = values.profile_photo;
-
-    const hasImageChanged = isBase64Image(blob);
-    if (hasImageChanged) {
-      const imgRes = await startUpload(files);
-      if (imgRes && imgRes[0].fileUrl) {
-        values.profile_photo = imgRes[0].fileUrl;
-      }
-    }
     console.log(values);
 
     //TODO: Update user profile
-    await updateUser ({
-      userId:user.id,
-      username : values.username ,
-      name: values.name ,
-      bio: values.bio ,
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      bio: values.bio,
       image: values.profile_photo,
-      path: pathname
+      path: pathname,
     });
 
-    if(pathname === '/profile/edit'){
+    if (pathname === "/profile/edit") {
       router.back();
-    } else{
-      router.push('/');
+    } else {
+      router.push("/");
     }
-
-  }
+  };
 
   return (
     <Form {...form}>
@@ -133,12 +121,19 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                 )}
               </FormLabel>
               <FormControl className="flex-1 text-base-semibold text-gray-200">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  placeholder="Add profile photo"
-                  className="account-form_image-input"
-                  onChange={(e) => handleImage(e, field.onChange)}
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    // Do something with the response
+                    console.log("Files: ", res);
+                    setFiles(res[0].url);
+                    field.onChange(res[0].url);
+                  }}
+                  onUploadError={(error: Error) => {
+                    // Do something with the error.
+                    console.log("Error during upload: ", error);
+                  }}
+                  className="ut-button:bg-[#6c47ff] ut-button:text-white"
                 />
               </FormControl>
             </FormItem>
@@ -201,7 +196,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="bg-primary-500" onClick={onSubmit}>
+        <Button type="submit" className="bg-primary-500">
           Submit
         </Button>
       </form>

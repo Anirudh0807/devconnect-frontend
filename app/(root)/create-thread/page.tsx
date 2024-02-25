@@ -1,5 +1,27 @@
+import PostThread from "@/components/forms/PostThread";
+import { fetchUser } from "@/lib/actions/user.actions";
+import { currentUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+
 async function Page() {
-    return <h1 className="head-text">Create Post</h1>
+   const user = await currentUser();
+
+   if (!user) return null;
+   console.log(user);
+
+  const userInfo = await fetchUser(user.id);
+
+  //TODO: Add onboarding
+  // if(!userInfo?.onboarded) redirect('/onboarding')
+
+  return (
+    <>
+      <h1 className="head-text">Create Post</h1>
+
+      <PostThread 
+      userId={userInfo._id}/>
+    </>
+  );
 }
 
 export default Page;

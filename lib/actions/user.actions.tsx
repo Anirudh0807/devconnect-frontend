@@ -31,8 +31,23 @@ export async function updateUser(
             revalidatePath(path);
         }
     } 
-    catch (error) {
+    catch (error: any) {
         throw new Error(`Failed to create/update user: ${error.message}`);
     }
 
+}
+
+export async function fetchUser(userId: string) {
+    try {
+        connectToDB();
+
+        const user = await User.findOne({id: userId});
+        // .populate({
+        //     path: 'communities',
+        //     model: Community
+        // });
+        return user;
+    } catch (error: any) {
+        throw new Error(`Failed to fetch user: ${error.message}`);
+    }
 }

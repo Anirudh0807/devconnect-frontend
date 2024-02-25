@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
-import { User } from "../models/user.model";
 
 interface Params {
   userId: string;
@@ -13,7 +13,7 @@ interface Params {
   path: string;
 }
 
-async function updateUser ({
+export async function updateUser({
   userId,
   username,
   name,
@@ -57,6 +57,4 @@ export const fetchUser = async (userId: string) => {
   } catch (error: any) {
     throw new Error(`Failed to fetch user: ${error.message}`);
   }
-}
-
-export default updateUser;
+};

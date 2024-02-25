@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "../ui/textarea";
 import { usePathname, useRouter } from "next/navigation";
-import updateUser from "@/lib/actions/user.actions";
+import { updateUser } from "@/lib/actions/user.actions";
 interface Props {
   user: {
     id: string;

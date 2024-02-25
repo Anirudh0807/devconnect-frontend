@@ -4,9 +4,10 @@ import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 async function Page() {
-  const user = await currentUser();
+   const user = await currentUser();
 
-  if (!user) return null;
+   if (!user) return null;
+   console.log(user);
 
   const userInfo = await fetchUser(user.id);
 

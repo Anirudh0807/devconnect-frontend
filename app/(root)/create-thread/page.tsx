@@ -1,4 +1,4 @@
-import Post from "@/components/forms/PostThread";
+import PostThread from "@/components/forms/PostThread";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -17,7 +17,7 @@ async function Page() {
     <>
       <h1 className="head-text">Create Post</h1>
 
-      <Post 
+      <PostThread 
       userId={userInfo._id}/>
     </>
   );

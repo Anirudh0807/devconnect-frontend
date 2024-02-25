@@ -18,6 +18,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "../ui/textarea";
 import { useUploadThing } from "@/lib/uploadthing";
+import { updateUser } from "@/lib/actions/user.actions";
+import { usePathname,useRouter } from "next/navigation";
 interface Props {
   user: {
     id: string;
@@ -33,6 +35,9 @@ interface Props {
 const AccountProfile = ({ user, btnTitle }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("media");
+  const router =  useRouter();
+  const pathname = usePathname();
+
   const form = useForm({
     resolver: zodResolver(UserValidation),
     defaultValues: {
@@ -79,7 +84,22 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     console.log(values);
 
     //TODO: Update user profile
-  };
+    await updateUser ({
+      userId:user.id,
+      username : values.username ,
+      name: values.name ,
+      bio: values.bio ,
+      image: values.profile_photo,
+      path: pathname
+    });
+
+    if(pathname === '/profile/edit'){
+      router.back();
+    } else{
+      router.push('/');
+    }
+
+  }
 
   //TODO: Add FormMessage for at every form input
   return (

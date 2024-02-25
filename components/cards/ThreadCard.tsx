@@ -105,4 +105,12 @@ const ThreadsCard = ({
   );
 };
 
+<<<<<<< HEAD:components/cards/ThreadsCard.tsx
 export default ThreadsCard;
+=======
+            </article>
+        )
+}
+
+export default ThreadCard;
+>>>>>>> e6591664539716a0a1c386601a12eb4273a7d928:components/cards/ThreadCard.tsx

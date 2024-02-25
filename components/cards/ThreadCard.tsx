@@ -22,7 +22,7 @@ interface Props {
     isComment?:boolean;
 }
 
-const ThreadsCard = ({
+const ThreadCard = ({
     id,
     currentUserId,
     ParentId,
@@ -43,4 +43,4 @@ const ThreadsCard = ({
         )
 }
 
-export default ThreadsCard;
+export default ThreadCard;

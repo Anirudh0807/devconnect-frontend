@@ -4,7 +4,7 @@ import Link from "next/link";
 interface Props {
   id: string;
   currentUserId: string;
-  ParentId: string | null;
+  parentId: string | null;
   content: string;
   author: {
     name: string;
@@ -28,7 +28,7 @@ interface Props {
 const ThreadCard = ({
   id,
   currentUserId,
-  ParentId,
+  parentId,
   content,
   author,
   community,

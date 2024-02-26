@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { revalidatePath } from "next/cache";
 import Thread from "../models/thread.model";
@@ -12,7 +12,7 @@ interface Params {
   path: string;
 }
 
- export const createThread = async({
+export const createThread = async ({
   text,
   author,
   communityId,
@@ -35,6 +35,38 @@ interface Params {
     revalidatePath(path);
   } catch (error: any) {
     throw new Error(`Failed to create thread: ${error.message}`);
+  }
+};
+
+export async function fetchThreadById(id: string) {
+  connectToDB();
+  try {
+    //TODO: Populate community
+    const thread = await Thread.findById(id)
+      .populate({ path: "author", model: User, select: "_id id name image" })
+      .populate({
+        path: "children",
+        populate: [
+          {
+            path: "author",
+            model: User,
+            select: "_id id name parentId image",
+          },
+          {
+            path: "children",
+            model: Thread,
+            populate: {
+              path: "author",
+              model: User,
+              select: "_id id name parentId image",
+            },
+          },
+        ],
+      })
+      .exec();
+    return thread;
+  } catch (error) {
+    throw new Error(`Failed to fetch thread: ${error}`);
   }
 }
 

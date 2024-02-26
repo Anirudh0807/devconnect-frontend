@@ -17,8 +17,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "../ui/textarea";
-import { updateUser } from "@/lib/actions/user.actions";
 import { usePathname, useRouter } from "next/navigation";
+import { updateUser } from "@/lib/actions/user.actions";
 interface Props {
   user: {
     id: string;
@@ -64,8 +64,10 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     } else {
       router.push("/");
     }
-  };
 
+  }
+
+  //TODO: Add FormMessage for at every form input
   return (
     <Form {...form}>
       <form
@@ -100,7 +102,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
               <FormControl className="flex-1 text-base-semibold text-gray-200">
                 <UploadButton
                   endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
+                  onClientUploadComplete={(res: any) => {
                     // Do something with the response
                     console.log("Files: ", res);
                     setFiles(res[0].url);

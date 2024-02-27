@@ -145,6 +145,8 @@ export async function getActivity(userId: string) {
   } catch (error) {
     console.error("Error fetching replies: ", error);
     throw error;
+  }
+}
 //TODO: Populate a community
 
 export async function fetchUserPosts(userId:string){

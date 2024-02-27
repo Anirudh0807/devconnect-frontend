@@ -48,7 +48,7 @@ async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
   }
 
   if (!result) {
-    redirect("/");
+    redirect("/home");
   }
 
   return (

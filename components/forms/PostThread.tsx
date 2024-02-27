@@ -45,7 +45,7 @@ function PostThread({ userId }: Props) {
       path: pathname,
     });
 
-    router.push("/");
+    router.push("/home");
   };
 
   return (

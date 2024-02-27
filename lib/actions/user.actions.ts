@@ -1,10 +1,26 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import User from "../models/user.model";
-import { connectToDB } from "../mongoose";
 import { FilterQuery, SortOrder } from "mongoose";
+import { revalidatePath } from "next/cache";
+
+import Community from "../models/community.model";
 import Thread from "../models/thread.model";
+import User from "../models/user.model";
+
+import { connectToDB } from "../mongoose";
+
+export async function fetchUser(userId: string) {
+  try {
+    connectToDB();
+
+    return await User.findOne({ id: userId }).populate({
+      path: "communities",
+      model: Community,
+    });
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user: ${error.message}`);
+  }
+}
 
 interface Params {
   userId: string;
@@ -17,19 +33,19 @@ interface Params {
 
 export async function updateUser({
   userId,
-  username,
-  name,
   bio,
-  image,
+  name,
   path,
+  username,
+  image,
 }: Params): Promise<void> {
-  connectToDB();
-
   try {
+    connectToDB();
+
     await User.findOneAndUpdate(
       { id: userId },
       {
-        username: username?.toLowerCase(),
+        username: username.toLowerCase(),
         name,
         bio,
         image,
@@ -46,21 +62,39 @@ export async function updateUser({
   }
 }
 
-export const fetchUser = async (userId: string) => {
+export async function fetchUserPosts(userId: string) {
   try {
     connectToDB();
 
-    const user = await User.findOne({ id: userId });
-    // .populate({
-    //     path: 'communities',
-    //     model: Community
-    // });
-    return user;
-  } catch (error: any) {
-    throw new Error(`Failed to fetch user: ${error.message}`);
+    // Find all threads authored by the user with the given userId
+    const threads = await User.findOne({ id: userId }).populate({
+      path: "threads",
+      model: Thread,
+      populate: [
+        {
+          path: "community",
+          model: Community,
+          select: "name id image _id", // Select the "name" and "_id" fields from the "Community" model
+        },
+        {
+          path: "children",
+          model: Thread,
+          populate: {
+            path: "author",
+            model: User,
+            select: "name image id", // Select the "name" and "_id" fields from the "User" model
+          },
+        },
+      ],
+    });
+    return threads;
+  } catch (error) {
+    console.error("Error fetching user threads:", error);
+    throw error;
   }
-};
+}
 
+// Almost similar to Thead (search + pagination) and Community (search + pagination)
 export async function fetchUsers({
   userId,
   searchString = "",
@@ -145,30 +179,5 @@ export async function getActivity(userId: string) {
   } catch (error) {
     console.error("Error fetching replies: ", error);
     throw error;
-  }
-}
-//TODO: Populate a community
-
-export async function fetchUserPosts(userId: string) {
-  try {
-    connectToDB();
-    //find all threads authored by given user (user id based)
-    const threads = await User.findOne({ if: userId }).populate({
-      path: "threads",
-      model: Thread,
-      populate: {
-        path: "children",
-        model: Thread,
-        populate: {
-          path: "author",
-          model: User,
-          select: "name image id",
-        },
-      },
-    });
-
-    return threads;
-  } catch (error: any) {
-    console.log(error);
   }
 }

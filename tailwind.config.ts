@@ -17,6 +17,13 @@ export default withUt({
       },
     },
     fontSize: {
+      "landing-heading": [
+        "72px",
+        {
+          lineHeight: "140%",
+          fontWeight: "800",
+        },
+      ],
       "heading1-bold": [
         "36px",
         {

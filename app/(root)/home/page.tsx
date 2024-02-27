@@ -4,7 +4,7 @@ import { fetchUser } from "@/lib/actions/user.actions";
 import { UserButton, currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-export default async function Home() {
+export default async function Page() {
   const result = await fetchPosts(1, 30);
 
   const user = await currentUser();

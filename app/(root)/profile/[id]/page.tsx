@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { profileTabs } from "@/constants";
+import ThreadsTab from "@/components/shared/ThreadsTab";
 
 
 const Page = async ({ params }: {params : {id: string}}) => {
@@ -50,6 +51,19 @@ const Page = async ({ params }: {params : {id: string}}) => {
                 </TabsTrigger>
             ))}
         </TabsList>
+        {profileTabs.map((tab) => (
+            <TabsContent
+              key={`content-${tab.label}`}
+              value={tab.value}
+              className='w-full text-light-1'
+            >
+              <ThreadsTab
+                currentUserId={user.id}
+                accountId={userInfo.id}
+                accountType='User'
+              />
+            </TabsContent>
+          ))}
     </Tabs>
     </div>
   </section>

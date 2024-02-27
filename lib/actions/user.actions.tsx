@@ -145,5 +145,30 @@ export async function getActivity(userId: string) {
   } catch (error) {
     console.error("Error fetching replies: ", error);
     throw error;
+//TODO: Populate a community
+
+export async function fetchUserPosts(userId:string){
+  try{
+    connectToDB();
+    //find all threads authored by given user (user id based)
+    const threads = await User.findOne({ if:userId })
+    .populate({
+      path:'threads',
+      model: Thread,
+      populate:{
+        path:'children',
+        model:Thread,
+        populate:{
+          path:'author',
+          model:User,
+          select: 'name image id'
+        }
+      }
+    })
+
+    return threads;
+  }
+  catch(error : any){
+    console.log(error)
   }
 }

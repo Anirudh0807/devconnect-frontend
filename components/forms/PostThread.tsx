@@ -49,30 +49,51 @@ function PostThread({ userId }: Props) {
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
     values.tags = tags;
 
-    await createThread({
-      text: values.thread,
-      author: userId,
-      communityId: organization ? organization.id : null,
-      tags: values.tags,
-      path: pathname,
-    });
-    console.log(values.tags);
+    const isDeveloperRelated = await handleAI(values.thread);
+    console.log(isDeveloperRelated);
 
-    router.push("/home");
+    if (isDeveloperRelated)
+    {
+      await createThread({
+        text: values.thread,
+        author: userId,
+        communityId: organization ? organization.id : null,
+        tags: values.tags,
+        path: pathname,
+      });
+      console.log(values.tags);
+      router.push("/home");
+    } 
+    else
+    {
+      alert("Content is not developer related, Please make sure you only upload content relavent to development!");
+    }
   };
 
-  const handleAI = async () => {
+  // yes
+  const handleAI = async (customPrompt: string) => {
+    const prompt = `Carefully classify the following social media post content into developer related or not. Please answer with yes or no and do not give any reasoning. \n\n Content: ${customPrompt}\n\n`;
+
     const response = await cohere.generate({
       model: "command",
-      prompt:
-        "Classify the following content into developer related or not. Please answer with yes or no and do not give any reasoning. \n\n Content: React 19 has released",
+      prompt,
       maxTokens: 300,
       temperature: 0.9,
       k: 0,
       stopSequences: [],
       returnLikelihoods: "NONE",
     });
-    console.log(`Prediction: ${response.generations[0].text}`);
+
+    const generatedText = response.generations[0].text.toLowerCase();
+
+    // Check if the generated text contains "yes" or "no"
+    const isDeveloperRelated = generatedText.includes("yes");
+
+    // console.log(`Prompt: ${"customPrompt"}`);
+    // console.log(`Prediction: ${generatedText}`);
+    // console.log(`Is Developer Related: ${isDeveloperRelated}`);
+
+    return isDeveloperRelated;
   };
 
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -158,9 +179,9 @@ function PostThread({ userId }: Props) {
           Post
         </Button>
       </form>
-      <Button className="bg-primary-500" onClick={handleAI}>
+      {/* <Button className="bg-primary-500" onClick={handleAI}>
         AI
-      </Button>
+      </Button> */}
     </Form>
   );
 }

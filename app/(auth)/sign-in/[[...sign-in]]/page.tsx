@@ -1,11 +1,15 @@
 import { SignIn, currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
- 
+
 export default async function Page() {
   const user = await currentUser();
-  if(user){
-    redirect('/home');
+  if (user) {
+    redirect("/home");
   }
-  
-  return <SignIn />;
+
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <SignIn />
+    </div>
+  );
 }

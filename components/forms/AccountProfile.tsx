@@ -25,6 +25,7 @@ interface Props {
     objectId: string;
     username: string;
     name: string;
+    isRecruiter: boolean;
     bio: string;
     image: string;
   };
@@ -35,6 +36,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   const [files, setFiles] = useState("");
   const router = useRouter();
   const pathname = usePathname();
+  const [isRecruiter, setIsRecruiter] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(UserValidation),
@@ -43,6 +45,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       name: user?.name || "",
       username: user?.username || "",
       bio: user?.bio || "",
+      isRecruiter: user?.isRecruiter || false,
     },
   });
 
@@ -54,6 +57,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       userId: user.id,
       username: values.username,
       name: values.name,
+      isRecruiter: values.isRecruiter,
       bio: values.bio,
       image: values.profile_photo,
       path: pathname,
@@ -137,6 +141,30 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             </FormItem>
           )}
         />
+
+<FormField
+  control={form.control}
+  name="isRecruiter"
+  render={({ field }) => (
+
+    <FormItem className="flex gap-3 flex-row w-full">
+      <FormLabel className="text-base-semibold text-light-2 mt-3">
+        
+        Are you a recruiter?
+      </FormLabel>
+      <FormControl>
+        <Input
+          className="flex w-5 h-5"
+          type="checkbox"
+          {...field}
+          checked={!!field.value} // Convert field.value to a boolean
+          onChange={(e) => field.onChange(e.target.checked)} // Convert the event value to a boolean
+        />
+      </FormControl>
+
+    </FormItem>
+  )}
+/>
 
         <FormField
           control={form.control}

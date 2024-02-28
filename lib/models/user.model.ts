@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema({
     id:{type: 'string', required: true},
     username:{type: 'string', required: true, unique: true},
     name:{type: 'string', required: true},
+    isRecruiter: Boolean,
     image: String, 
     bio: String,
     threads:[

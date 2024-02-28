@@ -26,6 +26,7 @@ interface Params {
   userId: string;
   username: string;
   name: string;
+  isRecruiter: boolean;
   bio: string;
   image: string;
   path: string;
@@ -35,6 +36,7 @@ export async function updateUser({
   userId,
   bio,
   name,
+  isRecruiter,
   path,
   username,
   image,
@@ -48,6 +50,7 @@ export async function updateUser({
         username: username.toLowerCase(),
         name,
         bio,
+        isRecruiter,
         image,
         onboarded: true,
       },

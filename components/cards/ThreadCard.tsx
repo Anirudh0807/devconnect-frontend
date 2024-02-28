@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { formatDateString } from "@/lib/utils";
 import DeleteThread from "../forms/DeleteThread";
+import { Button } from "../ui/button";
+import CopyButton from "../ui/copyButton";
 
 interface Props {
   id: string;
@@ -81,7 +83,7 @@ function ThreadCard({
                 <Link href={`/thread/${id}`}>
                   <Image
                     src="/assets/reply.svg"
-                    alt="heart"
+                    alt="reply"
                     width={24}
                     height={24}
                     className="cursor-pointer object-contain"
@@ -89,18 +91,13 @@ function ThreadCard({
                 </Link>
                 <Image
                   src="/assets/repost.svg"
-                  alt="heart"
+                  alt="repost"
                   width={24}
                   height={24}
                   className="cursor-pointer object-contain"
                 />
-                <Image
-                  src="/assets/share.svg"
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
+
+                <CopyButton id={id} />
               </div>
 
               {isComment && comments.length > 0 && (

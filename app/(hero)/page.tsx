@@ -6,9 +6,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-
   const user = await currentUser();
-  if(user){
+  if (user) {
     redirect("/home");
   }
   
@@ -34,9 +33,7 @@ export default async function Home() {
         </p>
         <div className="mx-auto flex w-fit flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
           <Link href={"/sign-in"}>
-            <Button
-              className="bg-indigo-500 hover:bg-indigo-700 rounded-lg px-10 py-8"
-            >
+            <Button className="bg-indigo-500 hover:bg-indigo-700 rounded-lg px-10 py-8">
               <p className="text-heading4-medium">Get Started</p>
             </Button>
           </Link>

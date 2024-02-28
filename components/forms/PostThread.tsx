@@ -16,12 +16,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-
 import { createThread } from "@/lib/actions/thread.actions";
 import { ThreadValidation } from "@/lib/validations/thread";
 import { CohereClient } from "cohere-ai";
 import { useState } from "react";
 import { Input } from "../ui/input";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ButtonLoading } from "../ui/loadingButton";
 
 interface Props {
   userId: string;
@@ -30,6 +32,7 @@ interface Props {
 function PostThread({ userId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const [loading, setLoading] = useState(false);
 
   const cohere = new CohereClient({
     token: "14JdkYHLTQuh9o5XiWrgoc8unvij3PzKlojVl1lS", // This is your trial API key
@@ -47,13 +50,13 @@ function PostThread({ userId }: Props) {
   });
 
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
+    setLoading(true);
     values.tags = tags;
 
     const isDeveloperRelated = await handleAI(values.thread);
     console.log(isDeveloperRelated);
 
-    if (isDeveloperRelated)
-    {
+    if (isDeveloperRelated) {
       await createThread({
         text: values.thread,
         author: userId,
@@ -62,11 +65,13 @@ function PostThread({ userId }: Props) {
         path: pathname,
       });
       console.log(values.tags);
+      setLoading(false);
       router.push("/home");
-    } 
-    else
-    {
-      alert("Content is not developer related, Please make sure you only upload content relavent to development!");
+    } else {
+      setLoading(false);
+      toast.error(
+        "Content is not developer related, Please make sure you only upload content relavent to development!",
+      );
     }
   };
 
@@ -174,10 +179,26 @@ function PostThread({ userId }: Props) {
             </FormItem>
           )}
         />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
 
-        <Button type="submit" className="bg-primary-500">
-          Post
-        </Button>
+        {loading ? (
+          <ButtonLoading />
+        ) : (
+          <Button type="submit" className="bg-primary-500">
+            Post
+          </Button>
+        )}
       </form>
       {/* <Button className="bg-primary-500" onClick={handleAI}>
         AI

@@ -19,7 +19,8 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { ThreadValidation } from "@/lib/validations/thread";
 import { createThread } from "@/lib/actions/thread.actions";
-
+import OpenAI from "openai";
+import { CohereClient } from "cohere-ai";
 interface Props {
   userId: string;
 }
@@ -27,6 +28,15 @@ interface Props {
 function PostThread({ userId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const cohere = new CohereClient({
+    token: "14JdkYHLTQuh9o5XiWrgoc8unvij3PzKlojVl1lS", // This is your trial API key
+  });
+  const openai = new OpenAI({
+    apiKey: "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",
+    dangerouslyAllowBrowser: true,
+  });
+
   const { organization } = useOrganization();
 
   const form = useForm<z.infer<typeof ThreadValidation>>({
@@ -46,6 +56,20 @@ function PostThread({ userId }: Props) {
     });
 
     router.push("/home");
+  };
+
+  const handleAI = async () => {
+    const response = await cohere.generate({
+      model: "command",
+      prompt:
+        "Classify the following content into developer related or not. Please answer with yes or no and do not give any reasoning. \n\n Content: React 19 has released",
+      maxTokens: 300,
+      temperature: 0.9,
+      k: 0,
+      stopSequences: [],
+      returnLikelihoods: "NONE",
+    });
+    console.log(`Prediction: ${response.generations[0].text}`);
   };
 
   return (
@@ -74,6 +98,9 @@ function PostThread({ userId }: Props) {
           Post Thread
         </Button>
       </form>
+      <Button className="bg-primary-500" onClick={handleAI}>
+        AI
+      </Button>
     </Form>
   );
 }

@@ -10,6 +10,7 @@ export default async function Home() {
   if (user) {
     redirect("/home");
   }
+  
   return (
     <div className="bg-slate-900 h-screen">
       <header className="container mx-auto flex w-full items-center justify-between py-4 px-6">

@@ -21,6 +21,11 @@ const threadSchema = new mongoose.Schema({
   parentId: {
     type: String,
   },
+  tags : [
+    {
+      type: String,
+    }
+  ],
   children: [
     {
       type: mongoose.Schema.Types.ObjectId,

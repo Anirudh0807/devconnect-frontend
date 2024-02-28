@@ -52,6 +52,7 @@ interface Params {
   text: string;
   author: string;
   communityId: string | null;
+  tags: string[];
   path: string;
 }
 
@@ -59,6 +60,7 @@ export async function createThread({
   text,
   author,
   communityId,
+  tags,
   path,
 }: Params) {
   try {
@@ -72,7 +74,8 @@ export async function createThread({
     const createdThread = await Thread.create({
       text,
       author,
-      community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
+      community: communityIdObject,
+      tags, // Assign communityId if provided, or leave it null for personal account
     });
 
     // Update User model

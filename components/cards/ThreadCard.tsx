@@ -14,6 +14,7 @@ interface Props {
     image: string;
     id: string;
   };
+  tags: string[];
   community: {
     id: string;
     name: string;
@@ -34,6 +35,7 @@ function ThreadCard({
   parentId,
   content,
   author,
+  tags,
   community,
   createdAt,
   comments,
@@ -61,11 +63,24 @@ function ThreadCard({
           </div>
 
           <div className="flex w-full flex-col">
-            <Link href={`/profile/${author.id}`} className="w-fit">
-              <h4 className="cursor-pointer text-base-semibold text-light-1">
-                {author.name}
-              </h4>
-            </Link>
+            <div className="flex flex-row">
+              <Link href={`/profile/${author.id}`} className="w-fit">
+                <h4 className="cursor-pointer text-base-semibold text-light-1">
+                  {author.name}
+                </h4>
+              </Link>
+
+              <div className="flex flex-row gap-2 ml-3">
+                {tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="text-light-1 text-small-regular py-[2px] px-2 bg-slate-700 rounded-full"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             <p className="mt-2 text-small-regular text-light-2">{content}</p>
 

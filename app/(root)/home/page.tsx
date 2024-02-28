@@ -30,6 +30,7 @@ export default async function Page() {
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}
+                tags={post.tags || []}
                 community={post.community}
                 createdAt={post.createdAt}
                 comments={post.children}

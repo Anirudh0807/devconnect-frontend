@@ -4,7 +4,7 @@ import { fetchUser, fetchUsers } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-const Page = async ({ params }: { params: { id: string } }) => {
+const Page = async ( { searchParams } : { searchParams: { [key:string ]: string | string[]} }) => {
   const user = await currentUser();
 
   if (!user) return null;
@@ -12,6 +12,8 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
+
+  console.log(searchParams.searchTerm, searchParams.searchString);
 
   //fetch Users
   const result = await fetchUsers({
@@ -25,7 +27,9 @@ const Page = async ({ params }: { params: { id: string } }) => {
     <section>
       <h1 className="head-text mb-10">Search</h1>
 
-      <Searchbar routeType="search" />
+      <div className="flex flex-row w-full">
+        <Searchbar />
+      </div>
 
       <div className="mt-14 flex flex-col gap-9">
         {result.users.length === 0 ? (

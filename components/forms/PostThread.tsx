@@ -1,11 +1,12 @@
 "use client";
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
 import { useOrganization } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,13 +15,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-
-import { ThreadValidation } from "@/lib/validations/thread";
 import { createThread } from "@/lib/actions/thread.actions";
-import { Input } from "../ui/input";
+import { ThreadValidation } from "@/lib/validations/thread";
+import { CohereClient } from "cohere-ai";
 import { useState } from "react";
+import { Input } from "../ui/input";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ButtonLoading } from "../ui/loadingButton";
 
 interface Props {
   userId: string;
@@ -29,6 +32,11 @@ interface Props {
 function PostThread({ userId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const [loading, setLoading] = useState(false);
+
+  const cohere = new CohereClient({
+    token: "14JdkYHLTQuh9o5XiWrgoc8unvij3PzKlojVl1lS", // This is your trial API key
+  });
   const { organization } = useOrganization();
 
   const form = useForm<z.infer<typeof ThreadValidation>>({
@@ -42,18 +50,55 @@ function PostThread({ userId }: Props) {
   });
 
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
+    setLoading(true);
     values.tags = tags;
 
-    await createThread({
-      text: values.thread,
-      author: userId,
-      communityId: organization ? organization.id : null,
-      tags: values.tags,
-      path: pathname,
-    });
-    console.log(values.tags);
+    const isDeveloperRelated = await handleAI(values.thread);
+    console.log(isDeveloperRelated);
 
-    router.push("/home");
+    if (isDeveloperRelated) {
+      await createThread({
+        text: values.thread,
+        author: userId,
+        communityId: organization ? organization.id : null,
+        tags: values.tags,
+        path: pathname,
+      });
+      console.log(values.tags);
+      setLoading(false);
+      router.push("/home");
+    } else {
+      setLoading(false);
+      toast.error(
+        "Content is not developer related, Please make sure you only upload content relavent to development!",
+      );
+    }
+  };
+
+  // yes
+  const handleAI = async (customPrompt: string) => {
+    const prompt = `Carefully classify the following social media post content into developer related or not. Please answer with yes or no and do not give any reasoning. \n\n Content: ${customPrompt}\n\n`;
+
+    const response = await cohere.generate({
+      model: "command",
+      prompt,
+      maxTokens: 300,
+      temperature: 0.9,
+      k: 0,
+      stopSequences: [],
+      returnLikelihoods: "NONE",
+    });
+
+    const generatedText = response.generations[0].text.toLowerCase();
+
+    // Check if the generated text contains "yes" or "no"
+    const isDeveloperRelated = generatedText.includes("yes");
+
+    // console.log(`Prompt: ${"customPrompt"}`);
+    // console.log(`Prediction: ${generatedText}`);
+    // console.log(`Is Developer Related: ${isDeveloperRelated}`);
+
+    return isDeveloperRelated;
   };
 
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -61,10 +106,9 @@ function PostThread({ userId }: Props) {
       e.preventDefault(); // Prevent form submission
       const newTag = (e.target as HTMLInputElement).value.trim(); // Get the trimmed tag value
       if (newTag) {
-        if(tags.length >= 3){
+        if (tags.length >= 3) {
           form.setValue("tag", "");
-        }
-        else{
+        } else {
           setTags([...tags, newTag]); // Add the new tag to the tags array
           setTag(""); // Clear the tag input field
         }
@@ -135,11 +179,30 @@ function PostThread({ userId }: Props) {
             </FormItem>
           )}
         />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
 
-        <Button type="submit" className="bg-primary-500">
-          Post
-        </Button>
+        {loading ? (
+          <ButtonLoading />
+        ) : (
+          <Button type="submit" className="bg-primary-500">
+            Post
+          </Button>
+        )}
       </form>
+      {/* <Button className="bg-primary-500" onClick={handleAI}>
+        AI
+      </Button> */}
     </Form>
   );
 }

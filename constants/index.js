@@ -30,6 +30,19 @@ export const sidebarLinks = [
       label: "Profile",
     },
   ];
+
+    export const sidebarRecruiterLinks = [
+    {
+      imgURL: "/assets/home.svg",
+      route: "/home",
+      label: "Home",
+    },
+    {
+      imgURL: "/assets/search.svg",
+      route: "/search",
+      label: "Search",
+    }
+  ];
   
   export const profileTabs = [
     { value: "threads", label: "Threads", icon: "/assets/reply.svg" },

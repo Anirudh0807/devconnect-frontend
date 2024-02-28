@@ -1,11 +1,12 @@
 "use client";
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
 import { useOrganization } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,13 +15,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-import { ThreadValidation } from "@/lib/validations/thread";
 import { createThread } from "@/lib/actions/thread.actions";
-import { Input } from "../ui/input";
+import { ThreadValidation } from "@/lib/validations/thread";
+import { CohereClient } from "cohere-ai";
 import { useState } from "react";
+import { Input } from "../ui/input";
 
 interface Props {
   userId: string;
@@ -29,6 +30,10 @@ interface Props {
 function PostThread({ userId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const cohere = new CohereClient({
+    token: "14JdkYHLTQuh9o5XiWrgoc8unvij3PzKlojVl1lS", // This is your trial API key
+  });
   const { organization } = useOrganization();
 
   const form = useForm<z.infer<typeof ThreadValidation>>({
@@ -56,15 +61,28 @@ function PostThread({ userId }: Props) {
     router.push("/home");
   };
 
+  const handleAI = async () => {
+    const response = await cohere.generate({
+      model: "command",
+      prompt:
+        "Classify the following content into developer related or not. Please answer with yes or no and do not give any reasoning. \n\n Content: React 19 has released",
+      maxTokens: 300,
+      temperature: 0.9,
+      k: 0,
+      stopSequences: [],
+      returnLikelihoods: "NONE",
+    });
+    console.log(`Prediction: ${response.generations[0].text}`);
+  };
+
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault(); // Prevent form submission
       const newTag = (e.target as HTMLInputElement).value.trim(); // Get the trimmed tag value
       if (newTag) {
-        if(tags.length >= 3){
+        if (tags.length >= 3) {
           form.setValue("tag", "");
-        }
-        else{
+        } else {
           setTags([...tags, newTag]); // Add the new tag to the tags array
           setTag(""); // Clear the tag input field
         }
@@ -140,6 +158,9 @@ function PostThread({ userId }: Props) {
           Post
         </Button>
       </form>
+      <Button className="bg-primary-500" onClick={handleAI}>
+        AI
+      </Button>
     </Form>
   );
 }

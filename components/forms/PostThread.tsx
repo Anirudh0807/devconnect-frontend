@@ -23,7 +23,7 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import { toast } from "react-toastify";
 import { ButtonLoading } from "../ui/loadingButton";
-import CustomToast from "../ui/customToast";
+import CustomToast, { showErrorToast, showSuccessToast } from "../ui/customToast";
 import Image from "next/image";
 
 interface Props {
@@ -68,12 +68,13 @@ function PostThread({ userId }: Props) {
       console.log(values.tags);
       setLoading(false);
       router.push("/home");
+      showSuccessToast("Post created successfully")
     } else if (values.tags.length === 0) {
       setLoading(false);
-      toast.error("Please add at least one tag");
+      showErrorToast("Please add at least one tag");
     } else {
       setLoading(false);
-      toast.error(
+      showErrorToast(
         "Content is not developer related, Please make sure you only upload content relavent to development!"
       );
     }
@@ -111,7 +112,7 @@ function PostThread({ userId }: Props) {
       const newTag = (e.target as HTMLInputElement).value.trim(); // Get the trimmed tag value
       if (newTag) {
         if (tags.length >= 3) {
-          toast.error("You can only add 3 tags");
+          showErrorToast("You can only add 3 tags");
           form.setValue("tag", "");
         } else {
           setTags([...tags, newTag]); // Add the new tag to the tags array
@@ -208,7 +209,7 @@ function PostThread({ userId }: Props) {
           pauseOnHover
           theme="dark"
         /> */}
-        <CustomToast/>
+        <CustomToast />
 
         {loading ? (
           <ButtonLoading />

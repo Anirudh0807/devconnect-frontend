@@ -275,3 +275,20 @@ export async function fetchThreadByTag(
     return [];
   }
 }
+
+export async function fetchUserReplies(userId: string) {
+  try {
+    connectToDB();
+
+    // Find all threads authored by user with the given userId where the parentId is not null
+    const threads = await Thread.find({ author: userId, parentId: { $ne: null } }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
+    });
+    return threads;
+  } catch (error) {
+    console.error("Error fetching user replies:", error);
+    return [];
+  }
+}

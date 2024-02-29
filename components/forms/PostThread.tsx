@@ -21,9 +21,9 @@ import { ThreadValidation } from "@/lib/validations/thread";
 import { CohereClient } from "cohere-ai";
 import { useState } from "react";
 import { Input } from "../ui/input";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { ButtonLoading } from "../ui/loadingButton";
+import CustomToast from "../ui/customToast";
 
 interface Props {
   userId: string;
@@ -179,7 +179,7 @@ function PostThread({ userId }: Props) {
             </FormItem>
           )}
         />
-        <ToastContainer
+        {/* <ToastContainer
           position="top-right"
           autoClose={5000}
           hideProgressBar={false}
@@ -190,7 +190,8 @@ function PostThread({ userId }: Props) {
           draggable
           pauseOnHover
           theme="dark"
-        />
+        /> */}
+        <CustomToast/>
 
         {loading ? (
           <ButtonLoading />

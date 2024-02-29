@@ -1,10 +1,11 @@
-import UserCard from "@/components/cards/UserCard";
+import ThreadCard from "@/components/cards/ThreadCard";
 import Searchbar from "@/components/shared/Searchbar";
-import { fetchUser, fetchUsers } from "@/lib/actions/user.actions";
+import { fetchThreadByTag } from "@/lib/actions/thread.actions";
+import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-const Page = async ({ params }: { params: { id: string } }) => {
+const Page = async ( { searchParams } : { searchParams: { [key: string]: string| string[] } }) => {
   const user = await currentUser();
 
   if (!user) return null;
@@ -13,33 +14,36 @@ const Page = async ({ params }: { params: { id: string } }) => {
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  //fetch Users
-  const result = await fetchUsers({
-    userId: user.id,
-    searchString: "",
-    pageNumber: 1,
-    pageSize: 25,
-  });
+  console.log(searchParams.searchTerm);
+
+  const search = typeof searchParams.searchTerm === "string" ? searchParams.searchTerm : "";
+
+  const posts = await fetchThreadByTag(search, 1, 25);
+  console.log(posts);
 
   return (
     <section>
       <h1 className="head-text mb-10">Search</h1>
 
-      <Searchbar routeType="search" />
+      <Searchbar />
 
       <div className="mt-14 flex flex-col gap-9">
-        {result.users.length === 0 ? (
-          <p className="no-result">No Users</p>
+        {posts.length === 0 ? (
+          <p className="no-result">No Posts Found</p>
         ) : (
           <>
-            {result.users.map((person) => (
-              <UserCard
-                key={person.id}
-                id={person.id}
-                name={person.name}
-                username={person.username}
-                imgUrl={person.image}
-                personType="User"
+            {posts.map((post) => (
+              <ThreadCard
+                key={post._id}
+                id={post._id}
+                currentUserId={user.id}
+                parentId={post.parentId}
+                content={post.text}
+                author={post.author}
+                tags={post.tags || []}
+                community={post.community}
+                createdAt={post.createdAt}
+                comments={post.children}
               />
             ))}
           </>

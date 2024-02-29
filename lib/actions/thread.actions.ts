@@ -245,3 +245,33 @@ export async function addCommentToThread(
     throw new Error("Unable to add comment");
   }
 }
+
+export async function fetchThreadByTag(
+  tag: string,
+  pageNumber = 1,
+  pageSize = 20
+) {
+  connectToDB();
+  try {
+    const threads = await Thread.find({ tags: tag })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "children", // Populate the children field
+        populate: {
+          path: "author", // Populate the author field within children
+          model: User,
+          select: "_id name parentId image", // Select only _id and username fields of the author
+        },
+      })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+    return threads;
+  } catch (error) {
+    console.error("Error fetching threads by tag:", error);
+    return [];
+  }
+}

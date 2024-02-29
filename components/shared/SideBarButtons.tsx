@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-function SideBarButtons({ userId, isRecruiter }) {
+function SideBarButtons({ userId, isRecruiter }: any) {
   const pathname = usePathname();
   return (
     <>
@@ -35,6 +35,14 @@ function SideBarButtons({ userId, isRecruiter }) {
               </Link>
             );
           })}
+
+          <div
+            className={"leftsidebar_link_hidden display:none"}
+          >
+            <Image src={sidebarLinks[4].imgURL} alt={sidebarLinks[4].label} width={24} height={24} />
+
+            <p className="text-light-1 max-lg:hidden">{sidebarLinks[4].label}</p>
+          </div>
         </div>
       ) : (
         <div className="flex w-full flex-1 flex-col gap-6 px-6">

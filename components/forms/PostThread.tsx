@@ -24,6 +24,7 @@ import { Input } from "../ui/input";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ButtonLoading } from "../ui/loadingButton";
+import Image from "next/image";
 
 interface Props {
   userId: string;
@@ -56,7 +57,7 @@ function PostThread({ userId }: Props) {
     const isDeveloperRelated = await handleAI(values.thread);
     console.log(isDeveloperRelated);
 
-    if (isDeveloperRelated) {
+    if (isDeveloperRelated && tags.length > 0) {
       await createThread({
         text: values.thread,
         author: userId,
@@ -67,10 +68,13 @@ function PostThread({ userId }: Props) {
       console.log(values.tags);
       setLoading(false);
       router.push("/home");
+    } else if (values.tags.length === 0) {
+      setLoading(false);
+      toast.error("Please add at least one tag");
     } else {
       setLoading(false);
       toast.error(
-        "Content is not developer related, Please make sure you only upload content relavent to development!",
+        "Content is not developer related, Please make sure you only upload content relavent to development!"
       );
     }
   };
@@ -102,11 +106,12 @@ function PostThread({ userId }: Props) {
   };
 
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" || e.key === "Tab") {
       e.preventDefault(); // Prevent form submission
       const newTag = (e.target as HTMLInputElement).value.trim(); // Get the trimmed tag value
       if (newTag) {
         if (tags.length >= 3) {
+          toast.error("You can only add 3 tags");
           form.setValue("tag", "");
         } else {
           setTags([...tags, newTag]); // Add the new tag to the tags array
@@ -151,16 +156,28 @@ function PostThread({ userId }: Props) {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                Tags
+                Tags ( Press Enter or Tab to add a tag )
               </FormLabel>
 
               <div className="flex flex-row gap-2">
                 {tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="text-light-1 bg-dark-4 p-2 rounded-lg"
+                    className="text-light-1 bg-dark-4 p-2 rounded-lg flex flex-row gap-2 items-center"
                   >
                     {tag}
+
+                    <Image
+                      src="/assets/delete.svg"
+                      alt="delte"
+                      width={18}
+                      height={18}
+                      className="cursor-pointer object-contain"
+                      onClick={async () => {
+                        const newTags = tags.filter((_, i) => i !== index);
+                        setTags(newTags);
+                      }}
+                    />
                   </span>
                 ))}
               </div>

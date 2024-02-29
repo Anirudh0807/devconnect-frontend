@@ -19,6 +19,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@uploadthing/react": "^6.2.4",
     "class-variance-authority": "^0.7.0",
+    "clipboard-copy": "^4.0.1",
     "clsx": "^2.1.0",
     "cohere-ai": "^7.7.5",
     "lucide-react": "^0.338.0",

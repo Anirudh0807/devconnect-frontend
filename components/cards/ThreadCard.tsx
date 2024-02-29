@@ -73,7 +73,7 @@ function ThreadCard({
               </Link>
 
               <div className="flex flex-row gap-2 ml-3">
-                {tags.map((tag, index) => (
+                {tags?.length > 0 && tags?.map((tag, index) => (
                   <span
                     key={index}
                     className="text-light-1 text-small-regular py-[2px] px-2 bg-slate-700 rounded-full"
@@ -156,16 +156,13 @@ function ThreadCard({
         </div>
       )}
 
-      <p className="text-subtle-medium text-gray-1 mt-2">
-        {formatDateString(createdAt)}
-      </p>
-
-      {!isComment && community && (
+      {!isComment && community ? (
         <Link
           href={`/communities/${community.id}`}
           className="mt-5 flex items-center"
         >
           <p className="text-subtle-medium text-gray-1">
+            {formatDateString(createdAt)}
             {community && ` - ${community.name} Community`}
           </p>
 
@@ -177,6 +174,10 @@ function ThreadCard({
             className="ml-1 rounded-full object-cover"
           />
         </Link>
+      ) : (
+        <p className="text-subtle-medium text-gray-1 mt-1">
+          {formatDateString(createdAt)}
+        </p>
       )}
     </article>
   );

@@ -1,6 +1,6 @@
-import Link from "next/link";
+import { EnvelopeClosedIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
-
+import Link from "next/link";
 interface Props {
   accountId: string;
   authUserId: string;
@@ -9,6 +9,7 @@ interface Props {
   imgUrl: string;
   bio: string;
   type?: string;
+  email: string;
 }
 
 function ProfileHeader({
@@ -19,6 +20,7 @@ function ProfileHeader({
   imgUrl,
   bio,
   type,
+  email,
 }: Props) {
   return (
     <div className="flex w-full flex-col justify-start">
@@ -34,9 +36,20 @@ function ProfileHeader({
           </div>
 
           <div className="flex-1">
-            <h2 className="text-left text-heading3-bold text-light-1">
-              {name}
-            </h2>
+            <div className="md:flex gap-4">
+              <h2 className="text-left text-heading3-bold text-light-1">
+                {name}
+              </h2>
+              <a
+                className="bg-slate-700 rounded-xl px-4 hidden md:block"
+                href={`mailto:${email}`}
+              >
+                <div className="flex gap-2">
+                  <EnvelopeClosedIcon className="h-4 w-4 mt-2 text-white" />
+                  <p className="text-light-2 mt-1">{email}</p>
+                </div>
+              </a>
+            </div>
             <p className="text-base-medium text-gray-1">@{username}</p>
           </div>
         </div>
@@ -57,8 +70,18 @@ function ProfileHeader({
       </div>
 
       <p className="mt-6 max-w-lg text-base-regular text-light-2">{bio}</p>
-
-      <div className="mt-12 h-0.5 w-full bg-dark-3" />
+      <div className="pt-5 flex justify-center">
+        <a
+          className="bg-slate-700 rounded-xl px-4 py-1 md:hidden"
+          href={`mailto:${email}`}
+        >
+          <div className="flex gap-2">
+            <EnvelopeClosedIcon className="h-4 w-4 mt-1 text-white" />
+            <p className="text-light-2">{email}</p>
+          </div>
+        </a>
+      </div>
+      <div className="mt-8 h-0.5 w-full bg-dark-3" />
     </div>
   );
 }

@@ -13,7 +13,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   if (!user) return null;
   //console.log(user);
-
+  const emailAddress = user.emailAddresses[0].emailAddress;
   const userInfo = await fetchUser(params.id);
 
   if (!userInfo?.onboarded) redirect("/onboarding");
@@ -27,6 +27,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
         username={userInfo.username}
         imgUrl={userInfo.image}
         bio={userInfo.bio}
+        email={emailAddress}
       />
       <div className="mt-9">
         <Tabs defaultValue="threads" className="w-full">

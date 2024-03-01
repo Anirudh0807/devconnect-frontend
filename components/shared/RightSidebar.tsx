@@ -5,7 +5,7 @@ import { currentUser } from "@clerk/nextjs";
 import UserCard from "../cards/UserCard";
 
 async function RightSidebar() {
-  const communitiesResult = await fetchCommunities({ pageSize: 3 });
+  const communitiesResult = await fetchCommunities({ pageSize: 2 });
   const user = await currentUser();
 
   if (!user) return null;

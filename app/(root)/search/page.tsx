@@ -5,7 +5,11 @@ import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-const Page = async ( { searchParams } : { searchParams: { [key: string]: string| string[] } }) => {
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] };
+}) => {
   const user = await currentUser();
 
   if (!user) return null;
@@ -16,14 +20,24 @@ const Page = async ( { searchParams } : { searchParams: { [key: string]: string|
 
   console.log(searchParams.searchTerm);
 
-  const search = typeof searchParams.searchTerm === "string" ? searchParams.searchTerm : "";
+  const search =
+    typeof searchParams.searchTerm === "string" ? searchParams.searchTerm : "";
 
   const posts = await fetchThreadByTag(search, 1, 25);
   console.log(posts);
 
   return (
     <section>
-      <h1 className="head-text mb-10">Search</h1>
+      {userInfo.isRecruiter ? (
+        <div className="pb-8">
+          <h1 className="head-text mb-2">Search for candidates</h1>
+          <p className="text-heading4-medium text-primary-500">
+            with skills you are looking for
+          </p>
+        </div>
+      ) : (
+        <h1 className="head-text mb-10">Search</h1>
+      )}
 
       <Searchbar />
 

@@ -7,13 +7,13 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
-function Searchbar() {
+function CommunitySearchbar() {
   const router = useRouter();
   const [search, setSearch] = useState("");
 
   const keyEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      router.push(`/search/?searchTerm=${search}`);
+      router.push(`/communities/?searchTerm=${search}`);
     }
   };
 
@@ -23,12 +23,12 @@ function Searchbar() {
         id="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder={"Search for Posts"}
+        placeholder={"Search for Communities"}
         className="no-focus searchbar_input"
         onKeyDown={keyEvent}
       />
 
-      <Button className="bg-transperent" onClick={() => router.push(`/search/?searchTerm=${search}`)}>
+      <Button className="bg-transperent" onClick={() => router.push(`/communities/?searchTerm=${search}`)}>
         <Image
           src="/assets/search-gray.svg"
           alt="search"
@@ -40,4 +40,4 @@ function Searchbar() {
   );
 }
 
-export default Searchbar;
+export default CommunitySearchbar;

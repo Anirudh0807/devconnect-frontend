@@ -31,6 +31,7 @@ export default async function Page() {
                 content={post.text}
                 author={post.author}
                 tags={post.tags || []}
+                likes={post.likes || []}
                 community={post.community}
                 createdAt={post.createdAt}
                 comments={post.children}

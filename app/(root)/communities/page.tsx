@@ -1,12 +1,12 @@
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import Searchbar from "@/components/shared/Searchbar";
 import Pagination from "@/components/shared/Pagination";
 import CommunityCard from "@/components/cards/CommunityCard";
 
 import { fetchUser } from "@/lib/actions/user.actions";
 import { fetchCommunities } from "@/lib/actions/community.actions";
+import CommunitySearchbar from "@/components/shared/CommunitySearchbar";
 
 async function Page({
   searchParams,
@@ -19,18 +19,25 @@ async function Page({
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
+  const search =
+    typeof searchParams.searchTerm === "string" ? searchParams.searchTerm : "";
+
+
   const result = await fetchCommunities({
-    searchString: searchParams.q,
+    searchString: search,
     pageNumber: searchParams?.page ? +searchParams.page : 1,
     pageSize: 25,
   });
+  console.log(`Search: ${search}`);
+  console.log(result);
+  
 
   return (
     <>
       <h1 className="head-text">Communities</h1>
 
       <div className="mt-5">
-        <Searchbar />
+        <CommunitySearchbar />
       </div>
 
       <section className="mt-9 flex flex-wrap gap-4">

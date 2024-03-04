@@ -54,6 +54,7 @@ const Page = async ({
                 parentId={post.parentId}
                 content={post.text}
                 author={post.author}
+                likes={post.likes || []}
                 tags={post.tags || []}
                 community={post.community}
                 createdAt={post.createdAt}

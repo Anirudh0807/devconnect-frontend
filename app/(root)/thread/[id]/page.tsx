@@ -25,6 +25,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
           content={thread.text}
           author={thread.author}
           tags={thread.tags || []}
+          likes={thread.likes || []}
           community={thread.community}
           createdAt={thread.createdAt}
           comments={thread.children}
@@ -49,6 +50,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
             content={comment.text}
             author={comment.author}
             tags={comment.tags || []}
+            likes={comment.likes || []}
             community={comment.community}
             createdAt={comment.createdAt}
             comments={comment.children}

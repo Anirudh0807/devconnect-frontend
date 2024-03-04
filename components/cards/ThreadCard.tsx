@@ -5,6 +5,8 @@ import { formatDateString } from "@/lib/utils";
 import DeleteThread from "../forms/DeleteThread";
 import { Button } from "../ui/button";
 import CopyButton from "../ui/copyButton";
+import LikeThread from "../forms/LikeThread";
+import { getLikeLength } from "@/lib/actions/thread.actions";
 
 interface Props {
   id: string;
@@ -17,6 +19,7 @@ interface Props {
     id: string;
   };
   tags: string[];
+  likes: string[];
   community: {
     id: string;
     name: string;
@@ -31,18 +34,21 @@ interface Props {
   isComment?: boolean;
 }
 
-function ThreadCard({
+async function ThreadCard({
   id,
   currentUserId,
   parentId,
   content,
   author,
   tags,
+  likes,
   community,
   createdAt,
   comments,
   isComment,
 }: Props) {
+  const likeLength = await getLikeLength(id);
+
   return (
     <article
       className={`flex w-full flex-col rounded-xl ${
@@ -73,14 +79,15 @@ function ThreadCard({
               </Link>
 
               <div className="flex flex-row gap-2 ml-3">
-                {tags?.length > 0 && tags?.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="text-light-1 text-small-regular py-[2px] px-2 bg-slate-700 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                {tags?.length > 0 &&
+                  tags?.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="text-light-1 text-small-regular py-[2px] px-2 bg-slate-700 rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
               </div>
             </div>
 
@@ -88,12 +95,10 @@ function ThreadCard({
 
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">
-                <Image
-                  src="/assets/heart-gray.svg"
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
+                <LikeThread
+                  likes={likes}
+                  threadId={id}
+                  currentUserId={currentUserId}
                 />
                 <Link href={`/thread/${id}`}>
                   <Image
@@ -135,36 +140,15 @@ function ThreadCard({
         />
       </div>
 
-      {!isComment && comments.length > 0 && (
-        <div className="ml-1 mt-3 flex items-center gap-2">
-          {comments.slice(0, 2).map((comment, index) => (
-            <Image
-              key={index}
-              src={comment.author.image}
-              alt={`user_${index}`}
-              width={24}
-              height={24}
-              className={`${index !== 0 && "-ml-5"} rounded-full object-cover`}
-            />
-          ))}
-
-          <Link href={`/thread/${id}`}>
-            <p className="mt-1 text-subtle-medium text-gray-1">
-              {comments.length} repl{comments.length > 1 ? "ies" : "y"}
-            </p>
-          </Link>
-        </div>
-      )}
-
       {!isComment && community ? (
         <Link
           href={`/communities/${community.id}`}
           className="mt-5 flex items-center"
         >
-          <p className="text-subtle-medium text-gray-1">
-            {formatDateString(createdAt)}
-            {community && ` - ${community.name} Community`}
-          </p>
+          <div className=" flex flex-row gap-2 text-subtle-medium text-gray-1">
+            <p>{formatDateString(createdAt)}</p>
+            <p>{community && `${community.name} Community`}</p>
+          </div>
 
           <Image
             src={community.image}
@@ -175,9 +159,9 @@ function ThreadCard({
           />
         </Link>
       ) : (
-        <p className="text-subtle-medium text-gray-1 mt-1">
-          {formatDateString(createdAt)}
-        </p>
+        <div className="flex flex-row gap-2 text-subtle-medium text-gray-1 mt-1">
+          <p>{formatDateString(createdAt)}</p>
+        </div>
       )}
     </article>
   );

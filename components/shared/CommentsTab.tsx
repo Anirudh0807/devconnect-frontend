@@ -24,6 +24,7 @@ async function CommentsTab({ currentUserId, accountId, accountType }: Props) {
                 currentUserId={currentUserId}
                 parentId={thread.parentId}
                 tags={thread.tags || []}
+                likes={thread.likes || []}
                 content={thread.text}
                 author={thread.author}
                 community={thread.community}

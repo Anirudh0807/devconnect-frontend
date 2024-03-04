@@ -7,6 +7,7 @@ import Image from "next/image";
 import { profileTabs } from "@/constants";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import CommentsTab from "@/components/shared/CommentsTab";
+import { fetchUserReplies } from "@/lib/actions/thread.actions";
 
 const Page = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
@@ -17,6 +18,8 @@ const Page = async ({ params }: { params: { id: string } }) => {
   const userInfo = await fetchUser(params.id);
 
   if (!userInfo?.onboarded) redirect("/onboarding");
+
+  const comm = await fetchUserReplies(userInfo._id);
 
   return (
     <section>
@@ -46,6 +49,12 @@ const Page = async ({ params }: { params: { id: string } }) => {
                 {tab.label === "Threads" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
                     {userInfo?.threads?.length}
+                  </p>
+                )}
+
+                {tab.label === "Replies" && (
+                  <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
+                    {comm.length}
                   </p>
                 )}
               </TabsTrigger>

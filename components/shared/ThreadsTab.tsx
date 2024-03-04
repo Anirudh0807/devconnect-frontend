@@ -19,6 +19,7 @@ interface Result {
       id: string;
     };
     tags: string[];
+    likes: string[];
     community: {
       id: string;
       name: string;
@@ -61,6 +62,7 @@ async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
           currentUserId={currentUserId}
           parentId={thread.parentId}
           tags={thread.tags || []}
+          likes={thread.likes || []}
           content={thread.text}
           author={
             accountType === "User"

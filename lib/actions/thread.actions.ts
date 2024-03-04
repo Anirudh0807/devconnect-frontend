@@ -53,6 +53,7 @@ interface Params {
   author: string;
   communityId: string | null;
   tags: string[];
+  likes: string[];
   path: string;
 }
 
@@ -61,6 +62,7 @@ export async function createThread({
   author,
   communityId,
   tags,
+  likes,
   path,
 }: Params) {
   try {
@@ -75,6 +77,7 @@ export async function createThread({
       text,
       author,
       community: communityIdObject,
+      likes,
       tags, // Assign communityId if provided, or leave it null for personal account
     });
 
@@ -211,6 +214,7 @@ export async function addCommentToThread(
   threadId: string,
   commentText: string,
   userId: string,
+  likes: string[],
   path: string
 ) {
   connectToDB();
@@ -227,7 +231,8 @@ export async function addCommentToThread(
     const commentThread = new Thread({
       text: commentText,
       author: userId,
-      parentId: threadId, // Set the parentId to the original thread's ID
+      parentId: threadId,
+      likes, // Set the parentId to the original thread's ID
     });
 
     // Save the comment thread to the database
@@ -290,5 +295,39 @@ export async function fetchUserReplies(userId: string) {
   } catch (error) {
     console.error("Error fetching user replies:", error);
     return [];
+  }
+}
+
+export async function likeThread(threadId: string, userId: string) {
+  try {
+    connectToDB();
+
+    // Find the thread by its ID and update the likes array
+    await Thread.findByIdAndUpdate(threadId, { $addToSet: { likes: userId } });
+  } catch (error) {
+    console.error("Error liking thread:", error);
+  }
+}
+
+export async function unlikeThread(threadId: string, userId: string) {
+  try {
+    connectToDB();
+
+    // Find the thread by its ID and update the likes array
+    await Thread.findByIdAndUpdate(threadId, { $pull: { likes: userId } });
+  } catch (error) {
+    console.error("Error unliking thread:", error);
+  }
+}
+
+export async function getLikeLength(threadId: string) {
+  try {
+    connectToDB();
+
+    const thread = await Thread.findById(threadId);
+    return thread?.likes.length;
+  } catch (error) {
+    console.error("Error fetching like length:", error);
+    return 0;
   }
 }

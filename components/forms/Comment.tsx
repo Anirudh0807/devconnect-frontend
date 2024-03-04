@@ -26,9 +26,10 @@ interface Props {
   threadId: string;
   currentUserImg: string;
   currentUserId: string;
+  likes?: string[];
 }
 
-function Comment({ threadId, currentUserImg, currentUserId }: Props) {
+function Comment({ threadId, currentUserImg, currentUserId, likes=[] }: Props) {
   const pathname = usePathname();
   const cohere = new CohereClient({
     token: "14JdkYHLTQuh9o5XiWrgoc8unvij3PzKlojVl1lS", // This is your trial API key
@@ -82,6 +83,7 @@ function Comment({ threadId, currentUserImg, currentUserId }: Props) {
         threadId,
         values.thread,
         JSON.parse(currentUserId),
+        likes,
         pathname
       );
       console.log("hey");

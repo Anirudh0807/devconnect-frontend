@@ -63,6 +63,7 @@ function PostThread({ userId }: Props) {
         author: userId,
         communityId: organization ? organization.id : null,
         tags: values.tags,
+        likes: [],
         path: pathname,
       });
       console.log(values.tags);

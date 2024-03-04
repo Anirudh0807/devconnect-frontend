@@ -6,6 +6,7 @@ import {
   unlikeThread,
 } from "@/lib/actions/thread.actions";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -15,6 +16,8 @@ interface Props {
 }
 
 function LikeThread({ threadId, currentUserId, likes }: Props) {
+  const router = useRouter();
+
   const [liked, setLiked] = useState(likes.includes(currentUserId));
 
   const [num, setNum] = useState(likes.length);
@@ -23,17 +26,20 @@ function LikeThread({ threadId, currentUserId, likes }: Props) {
     if (liked) {
       await unlikeThread(threadId, currentUserId);
       const likeLength = await getLikeLength(threadId);
-      console.log(likeLength);
       setNum(likeLength);
       setLiked(false);
     } else {
       await likeThread(threadId, currentUserId);
       const likeLength = await getLikeLength(threadId);
-      console.log(likeLength);
       setNum(likeLength);
       setLiked(true);
     }
   };
+
+  useEffect(() => {
+    router.refresh();
+  }, [liked, router]);
+
   return (
     <div className="flex flex-row justify-center items-center gap-1">
       <Image

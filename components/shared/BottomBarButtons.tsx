@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 
 function BottomBarButtons({ isRecruiter }: any) {
   const pathname = usePathname();
-  console.log(isRecruiter);
 
   return (
     <>

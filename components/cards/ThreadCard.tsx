@@ -1,12 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import {
+  fetchPosts,
+  getLike,
+  getLikeLength,
+} from "@/lib/actions/thread.actions";
 import { formatDateString } from "@/lib/utils";
 import DeleteThread from "../forms/DeleteThread";
-import { Button } from "../ui/button";
-import CopyButton from "../ui/copyButton";
 import LikeThread from "../forms/LikeThread";
-import { getLikeLength } from "@/lib/actions/thread.actions";
+import CopyButton from "../ui/copyButton";
 
 interface Props {
   id: string;
@@ -41,13 +44,12 @@ async function ThreadCard({
   content,
   author,
   tags,
-  likes,
   community,
   createdAt,
   comments,
   isComment,
 }: Props) {
-  const likeLength = await getLikeLength(id);
+  const likes = await getLike(id);
 
   return (
     <article

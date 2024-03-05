@@ -30,9 +30,10 @@ interface Props {
     image: string;
   };
   btnTitle: string;
+  email: string;
 }
 
-const AccountProfile = ({ user, btnTitle }: Props) => {
+const AccountProfile = ({ user, btnTitle, email }: Props) => {
   const [files, setFiles] = useState("");
   const router = useRouter();
   const pathname = usePathname();
@@ -57,6 +58,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       userId: user.id,
       username: values.username,
       name: values.name,
+      email: email,
       isRecruiter: values.isRecruiter,
       bio: values.bio,
       image: values.profile_photo,
@@ -68,8 +70,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     } else {
       router.push("/");
     }
-
-  }
+  };
 
   //TODO: Add FormMessage for at every form input
   return (
@@ -142,29 +143,26 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
           )}
         />
 
-<FormField
-  control={form.control}
-  name="isRecruiter"
-  render={({ field }) => (
-
-    <FormItem className="flex gap-3 flex-row w-full">
-      <FormLabel className="text-base-semibold text-light-2 mt-3">
-        
-        Are you a recruiter?
-      </FormLabel>
-      <FormControl>
-        <Input
-          className="flex w-5 h-5"
-          type="checkbox"
-          {...field}
-          checked={!!field.value} // Convert field.value to a boolean
-          onChange={(e) => field.onChange(e.target.checked)} // Convert the event value to a boolean
+        <FormField
+          control={form.control}
+          name="isRecruiter"
+          render={({ field }) => (
+            <FormItem className="flex gap-3 flex-row w-full">
+              <FormLabel className="text-base-semibold text-light-2 mt-3">
+                Are you a recruiter?
+              </FormLabel>
+              <FormControl>
+                <Input
+                  className="flex w-5 h-5"
+                  type="checkbox"
+                  {...field}
+                  checked={!!field.value} // Convert field.value to a boolean
+                  onChange={(e) => field.onChange(e.target.checked)} // Convert the event value to a boolean
+                />
+              </FormControl>
+            </FormItem>
+          )}
         />
-      </FormControl>
-
-    </FormItem>
-  )}
-/>
 
         <FormField
           control={form.control}

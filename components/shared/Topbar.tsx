@@ -39,7 +39,7 @@ async function Topbar() {
           </SignedIn>
         </div>
 
-        {userInfo.isRecruiter ? (
+        {userInfo?.isRecruiter ? (
           <UserButton
             appearance={{
               baseTheme: dark,

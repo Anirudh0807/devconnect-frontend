@@ -16,6 +16,9 @@ async function Page() {
     objectId: userInfo?._id,
     username: userInfo ? userInfo?.username : user.username,
     name: userInfo ? userInfo?.name : user.firstName ?? "",
+    email: userInfo
+      ? userInfo?.email
+      : user.emailAddresses[0].emailAddress ?? "",
     bio: userInfo ? userInfo?.bio : "",
     image: userInfo ? userInfo?.image : user.imageUrl,
     isRecruiter: userInfo ? userInfo?.isRecruiter : false,
@@ -29,7 +32,11 @@ async function Page() {
       </p>
 
       <section className="mt-9 bg-dark-2 p-10">
-        <AccountProfile user={userData} btnTitle="Continue" />
+        <AccountProfile
+          user={userData}
+          btnTitle="Continue"
+          email={userData.email}
+        />
       </section>
     </main>
   );

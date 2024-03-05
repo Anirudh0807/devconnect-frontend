@@ -14,9 +14,9 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   if (!user) return null;
   //console.log(user);
-  const emailAddress = user.emailAddresses[0].emailAddress;
-  const userInfo = await fetchUser(params.id);
 
+  const userInfo = await fetchUser(params.id);
+  const emailAddress = userInfo.email;
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const comm = await fetchUserReplies(userInfo._id);

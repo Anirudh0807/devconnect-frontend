@@ -286,7 +286,10 @@ export async function fetchUserReplies(userId: string) {
     connectToDB();
 
     // Find all threads authored by user with the given userId where the parentId is not null
-    const threads = await Thread.find({ author: userId, parentId: { $ne: null } }).populate({
+    const threads = await Thread.find({
+      author: userId,
+      parentId: { $ne: null },
+    }).populate({
       path: "author",
       model: User,
       select: "_id id name image",
@@ -329,5 +332,17 @@ export async function getLikeLength(threadId: string) {
   } catch (error) {
     console.error("Error fetching like length:", error);
     return 0;
+  }
+}
+
+export async function getLike(threadId: string) {
+  try {
+    connectToDB();
+
+    const thread = await Thread.findById(threadId);
+    return thread?.likes;
+  } catch (error) {
+    console.error("Error fetching like:", error);
+    return false;
   }
 }

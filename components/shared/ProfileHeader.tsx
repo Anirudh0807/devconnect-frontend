@@ -73,23 +73,24 @@ function ProfileHeader({
           )}
         </div>
 
+      {type !== "Community" && (
         <p className="mt-6 max-w-lg text-base-regular text-light-2">{bio}</p>
-        <div className="pt-5 flex justify-center">
-          {email && (
-            <a
-              className="bg-slate-700 rounded-xl px-4 py-1 md:hidden"
-              href={`mailto:${email}`}
-            >
-              <div className="flex gap-2">
-                <EnvelopeClosedIcon className="h-4 w-4 mt-1 text-white" />
-                <p className="text-light-2">{email}</p>
-              </div>
-            </a>
-          )}
-        </div>
-        <div className="mt-8 h-0.5 w-full bg-dark-3" />
+      )}
+      <div className="pt-5 flex justify-center">
+        {email && (
+          <a
+            className="bg-slate-700 rounded-xl px-4 py-1 md:hidden"
+            href={`mailto:${email}`}
+          >
+            <div className="flex gap-2">
+              <EnvelopeClosedIcon className="h-4 w-4 mt-1 text-white" />
+              <p className="text-light-2">{email}</p>
+            </div>
+          </a>
+        )}
       </div>
-    </>
+      <div className="mt-8 h-0.5 w-full bg-dark-3" />
+    </div>
   );
 }
 

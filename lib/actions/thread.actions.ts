@@ -258,7 +258,7 @@ export async function fetchThreadByTag(
 ) {
   connectToDB();
   try {
-    const threads = await Thread.find({ tags: tag })
+    const threads = await Thread.find({ tags: { $regex: new RegExp(tag, 'i') } })
       .populate({
         path: "author",
         model: User,

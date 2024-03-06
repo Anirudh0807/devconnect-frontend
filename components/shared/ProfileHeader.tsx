@@ -71,7 +71,9 @@ function ProfileHeader({
         )}
       </div>
 
-      <p className="mt-6 max-w-lg text-base-regular text-light-2">{bio}</p>
+      {type !== "Community" && (
+        <p className="mt-6 max-w-lg text-base-regular text-light-2">{bio}</p>
+      )}
       <div className="pt-5 flex justify-center">
         {email && (
           <a

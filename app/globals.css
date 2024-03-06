@@ -14,6 +14,10 @@
         @apply text-heading2-bold text-light-1;
     }
 
+    .head-text-2{
+        @apply text-heading1-bold;
+    }
+
     .landing-text {
         @apply text-landing-heading text-light-1;
     }
@@ -24,7 +28,7 @@
 
     /* Activity */
     .activity-card {
-        @apply flex items-center gap-2 rounded-md bg-dark-2 px-7 py-4;
+        @apply flex items-center gap-2 rounded-md bg-dark-4 px-7 py-4;
     }
 
     /* No Result */

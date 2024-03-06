@@ -244,3 +244,36 @@ export async function getLikesFeed(userId: string) {
     throw error;
   }
 }
+
+
+interface Param {
+  userId: string;
+  name?: string;
+  username?: string;
+  bio?: string;
+  path?: string;
+}
+
+export async function updateUserProfile({ userId, name, username, bio, path }: Param): Promise<void> {
+  try {
+    connectToDB();
+
+    await User.findOneAndUpdate(
+      { id: userId },
+      {
+        $set: {
+          username: username?.toLowerCase(),
+          name,
+          bio,
+        },
+      },
+      { upsert: true, new: true }
+    );
+
+    if (path) {
+      revalidatePath(path);
+    }
+  } catch (error: any) {
+    throw new Error(`Failed to update user profile: ${error.message}`);
+  }
+}

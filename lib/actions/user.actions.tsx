@@ -8,6 +8,7 @@ import Thread from "../models/thread.model";
 import User from "../models/user.model";
 
 import { connectToDB } from "../mongoose";
+import { clerkClient } from "@clerk/nextjs";
 
 export async function fetchUser(userId: string) {
   try {
@@ -26,6 +27,7 @@ interface Params {
   userId: string;
   username: string;
   name: string;
+  email: string;
   isRecruiter: boolean;
   bio: string;
   image: string;
@@ -36,6 +38,7 @@ export async function updateUser({
   userId,
   bio,
   name,
+  email,
   isRecruiter,
   path,
   username,
@@ -49,6 +52,7 @@ export async function updateUser({
       {
         username: username.toLowerCase(),
         name,
+        email,
         bio,
         isRecruiter,
         image,
@@ -181,6 +185,62 @@ export async function getActivity(userId: string) {
     return replies;
   } catch (error) {
     console.error("Error fetching replies: ", error);
+    throw error;
+  }
+}
+
+export async function getLikesInfo(likes: [string]) {
+  try {
+    let likedBy = [];
+
+    // Iterate through the likes array
+    for (const like of likes) {
+      // Call getUser function for each user ID
+      const user = await fetchUser(like);
+      // Extract required information from user object
+      const userInfo = {
+        userId: user.id,
+        name: user.name,
+        image: user.image,
+      };
+      // Push the extracted information to likedBy array
+      likedBy.push(userInfo);
+    }
+
+    return likedBy;
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error while fetching likes information:", error);
+    throw error;
+  }
+}
+
+export async function getLikesFeed(userId: string) {
+  try {
+    const threads = await Thread.find({ author: userId });
+    let activityFeed = [];
+
+    // Iterate through all threads
+    for (const thread of threads) {
+      // Call getLikesInfo function to get likes information for each thread
+      if (thread.likes.length > 0) {
+        const likedBy = await getLikesInfo(thread.likes);
+
+        // Construct object containing thread information along with likedBy array
+        const threadInfo = {
+          id: thread._id,
+          likedBy: likedBy,
+        };
+
+        // Push threadInfo object to activityFeed array
+        activityFeed.push(threadInfo);
+      }
+    }
+
+    return activityFeed;
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error while fetching activity feed:", error);
     throw error;
   }
 }

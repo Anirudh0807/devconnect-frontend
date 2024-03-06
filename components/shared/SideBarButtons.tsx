@@ -23,6 +23,7 @@ function SideBarButtons({ userId, isRecruiter }: any) {
                 href={link.route}
                 key={link.label}
                 className={`leftsidebar_link ${isActive && "bg-primary-500"}`}
+                shallow
               >
                 <Image
                   src={link.imgURL}
@@ -36,12 +37,17 @@ function SideBarButtons({ userId, isRecruiter }: any) {
             );
           })}
 
-          <div
-            className={"leftsidebar_link_hidden display:none"}
-          >
-            <Image src={sidebarLinks[4].imgURL} alt={sidebarLinks[4].label} width={24} height={24} />
+          <div className={"leftsidebar_link_hidden display:none"}>
+            <Image
+              src={sidebarLinks[4].imgURL}
+              alt={sidebarLinks[4].label}
+              width={24}
+              height={24}
+            />
 
-            <p className="text-light-1 max-lg:hidden">{sidebarLinks[4].label}</p>
+            <p className="text-light-1 max-lg:hidden">
+              {sidebarLinks[4].label}
+            </p>
           </div>
         </div>
       ) : (
@@ -59,6 +65,7 @@ function SideBarButtons({ userId, isRecruiter }: any) {
                 href={link.route}
                 key={link.label}
                 className={`leftsidebar_link ${isActive && "bg-primary-500"}`}
+                shallow
               >
                 <Image
                   src={link.imgURL}

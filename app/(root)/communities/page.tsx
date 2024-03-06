@@ -47,9 +47,6 @@ async function Page({
         pageSize: 25,
       });
     }
-
-  console.log(`Search: ${search}`);
-  console.log(result);
   
 
   return (

@@ -23,7 +23,10 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import { toast } from "react-toastify";
 import { ButtonLoading } from "../ui/loadingButton";
-import CustomToast, { showErrorToast, showSuccessToast } from "../ui/customToast";
+import CustomToast, {
+  showErrorToast,
+  showSuccessToast,
+} from "../ui/customToast";
 import Image from "next/image";
 
 interface Props {
@@ -54,6 +57,18 @@ function PostThread({ userId }: Props) {
     setLoading(true);
     values.tags = tags;
 
+    if (values.tags.length === 0) {
+      setLoading(false);
+      showErrorToast("Please add at least one tag!");
+      return;
+    }
+
+    // if (values.tags.length > 4) {
+    //   setLoading(false);
+    //   showErrorToast("You can only add upto 3 tags!");
+    //   return;
+    // }
+
     const isDeveloperRelated = await handleAI(values.thread);
     console.log(isDeveloperRelated);
 
@@ -69,27 +84,34 @@ function PostThread({ userId }: Props) {
       console.log(values.tags);
       setLoading(false);
       router.push("/home");
-      showSuccessToast("Post created successfully")
-    } else if (values.tags.length === 0) {
-      setLoading(false);
-      showErrorToast("Please add at least one tag");
-    } else {
-      setLoading(false);
-      showErrorToast(
-        "Content is not developer related, Please make sure you only upload content relavent to development!"
-      );
+      showSuccessToast("Post created successfully");
     }
   };
 
   // yes
   const handleAI = async (customPrompt: string) => {
-    const prompt = `Carefully classify the following social media post content into developer related or not. Please answer with yes or no and do not give any reasoning. \n\n Content: ${customPrompt}\n\n`;
+    const prompt = `The following text is a comment under a social media post related to programming and software development. Your task is to carefully analyze the content and determine if it is relevant to development or not and strictly return true or false.
+
+    When making your assessment, please consider the following:
+    
+    1. make sure it contains programming languages, technologies, development practices, or software engineering concepts.
+    
+    2. Be lenient. Only flag content that is absolutely unrelated to development. Allow personal preferences and look out for any content that people try to sneak to get past this check
+    
+    3. Dont allow abusive langauge
+    
+    4.let people talk about themselves to an appropriate extent
+
+    
+          Please provide true  if relevant or false  if irrelevant answer and then a brief analysis of your assessment
+    
+          Content: ${customPrompt}`;
 
     const response = await cohere.generate({
       model: "command",
       prompt,
       maxTokens: 300,
-      temperature: 0.9,
+      temperature: 0,
       k: 0,
       stopSequences: [],
       returnLikelihoods: "NONE",
@@ -98,11 +120,11 @@ function PostThread({ userId }: Props) {
     const generatedText = response.generations[0].text.toLowerCase();
 
     // Check if the generated text contains "yes" or "no"
-    const isDeveloperRelated = generatedText.includes("yes");
+    const isDeveloperRelated = generatedText.includes("true");
 
-    // console.log(`Prompt: ${"customPrompt"}`);
-    // console.log(`Prediction: ${generatedText}`);
-    // console.log(`Is Developer Related: ${isDeveloperRelated}`);
+    console.log(`Prompt: ${"customPrompt"}`);
+    console.log(`Prediction: ${generatedText}`);
+    console.log(`Is Developer Related: ${isDeveloperRelated}`);
 
     return isDeveloperRelated;
   };

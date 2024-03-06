@@ -142,29 +142,54 @@ async function ThreadCard({
         />
       </div>
 
-      {!isComment && community ? (
-        <Link
-          href={`/communities/${community.id}`}
-          className="mt-5 flex items-center"
-        >
-          <div className=" flex flex-row gap-2 text-subtle-medium text-gray-1">
-            <p>{formatDateString(createdAt)}</p>
-            <p>{community && `${community.name} Community`}</p>
-          </div>
+      <div className="mt-2">
+        {!isComment && comments.length > 0 && (
+          <div className="ml-1 mb-2 flex items-center gap-2">
+            {comments.slice(0, 2).map((comment, index) => (
+              <Image
+                key={index}
+                src={comment.author.image}
+                alt={`user_${index}`}
+                width={24}
+                height={24}
+                className={`${
+                  index !== 0 && "-ml-5"
+                } rounded-full object-cover`}
+              />
+            ))}
 
-          <Image
-            src={community.image}
-            alt={community.name}
-            width={14}
-            height={14}
-            className="ml-1 rounded-full object-cover"
-          />
-        </Link>
-      ) : (
-        <div className="flex flex-row gap-2 text-subtle-medium text-gray-1 mt-1">
-          <p>{formatDateString(createdAt)}</p>
-        </div>
-      )}
+            <Link href={`/thread/${id}`}>
+              <p className="mt-1 text-subtle-medium text-gray-1">
+                {comments.length} repl{comments.length > 1 ? "ies" : "y"}
+              </p>
+            </Link>
+          </div>
+        )}
+
+        {!isComment && community ? (
+          <Link
+            href={`/communities/${community.id}`}
+            className="mt-5 flex items-center"
+          >
+            <div className=" flex flex-row gap-2 text-subtle-medium text-gray-1">
+              <p>{formatDateString(createdAt)}</p>
+              <p>{community && `${community.name} Community`}</p>
+            </div>
+
+            <Image
+              src={community.image}
+              alt={community.name}
+              width={14}
+              height={14}
+              className="ml-1 rounded-full object-cover"
+            />
+          </Link>
+        ) : (
+          <div className="flex flex-row gap-2 text-subtle-medium text-gray-1 mt-1">
+            <p>{formatDateString(createdAt)}</p>
+          </div>
+        )}
+      </div>
     </article>
   );
 }

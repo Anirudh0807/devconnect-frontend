@@ -1,27 +1,23 @@
 import PostThread from "@/components/forms/PostThread";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
-export async function getStaticProps() {
+async function Page() {
   const user = await currentUser();
 
-  if (!user) {
-    return { props: { userInfo: null } };
-  }
+  if (!user) return null;
+  console.log(user);
 
   const userInfo = await fetchUser(user.id);
 
-  return {
-    props: { userInfo },
-    revalidate: 3600, // 1 hour
-  };
-}
+  if (!userInfo?.onboarded) redirect("/onboarding");
 
-function Page({ userInfo }: any) {
   return (
     <>
       <h1 className="head-text">Create Post</h1>
-      {userInfo && <PostThread userId={userInfo._id} />}
+
+      <PostThread userId={userInfo._id} />
     </>
   );
 }

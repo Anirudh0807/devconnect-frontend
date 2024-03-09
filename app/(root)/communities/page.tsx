@@ -8,6 +8,17 @@ import { fetchUser } from "@/lib/actions/user.actions";
 import { fetchCommunities } from "@/lib/actions/community.actions";
 import CommunitySearchbar from "@/components/shared/CommunitySearchbar";
 
+interface CommunityType {
+  id: string;
+  name: string;
+  username: string;
+  image: string;
+  bio: string;
+  members: {
+     image: string;
+   }[];
+}
+
 async function Page({
   searchParams,
 }: {
@@ -23,13 +34,19 @@ async function Page({
     typeof searchParams.searchTerm === "string" ? searchParams.searchTerm : "";
 
 
-  const result = await fetchCommunities({
-    searchString: search,
-    pageNumber: searchParams?.page ? +searchParams.page : 1,
-    pageSize: 25,
-  });
-  console.log(`Search: ${search}`);
-  console.log(result);
+    let result: { communities: Omit<any, never>[]; isNext: boolean } = {
+      communities: [],
+      isNext: false,
+    };
+  
+    // Only fetch communities if the search term is not an empty string
+    if (search) {
+      result = await fetchCommunities({
+        searchString: search,
+        pageNumber: searchParams?.page ? +searchParams.page : 1,
+        pageSize: 25,
+      });
+    }
   
 
   return (

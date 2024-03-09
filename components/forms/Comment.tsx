@@ -44,8 +44,24 @@ function Comment({ threadId, currentUserImg, currentUserId, likes=[] }: Props) {
 
     // yes
     const handleAI = async (customPrompt: string) => {
-      const prompt = `The following text content is the comment under a social media post I need you to carefully judge if this is a comment that is relavant to the conversation or not, the entire idea of the website is developer oriented, so if you find anything that feels offensive or extremely unrelated then flag it. if it is then return yes if it isnt then return a no. \n\n Content: ${customPrompt}\n\n`;
-  
+      const promp = `The following text content is the comment under a social media post I need you to carefully judge if this is a comment that is relavant to the conversation or not, the entire idea of the website is developer oriented, so if you find anything that feels offensive or extremely unrelated then flag it. if it is then return yes if it isnt then return a no. \n\n Content: ${customPrompt}\n\n`;
+
+
+      const prompt = `The following text is a comment under a social media post related to programming and software development. Your task is to carefully analyze the content and determine if it is relevant to development or not and strictly return true or false.
+
+      When making your assessment, please consider the following:
+      
+      1. make sure it contains programming languages, technologies, development practices, or software engineering concepts.
+      
+      2. Be lenient. Only flag content that is absolutely unrelated to development. Allow personal preferences and look out for any content that people try to sneak to get past this check
+      
+      3. Dont allow abusive langauge
+      
+      
+            Please provide true  if relevant or false  if irrelevant answer and then a brief analysis of your assessment
+      
+            Content: ${customPrompt}`
+
       const response = await cohere.generate({
         model: "command",
         prompt,
@@ -55,11 +71,10 @@ function Comment({ threadId, currentUserImg, currentUserId, likes=[] }: Props) {
         stopSequences: [],
         returnLikelihoods: "NONE",
       });
-  
       const generatedText = response.generations[0].text.toLowerCase();
   
       // Check if the generated text contains "yes" or "no"
-      const isDeveloperRelated = generatedText.includes("yes");
+      const isDeveloperRelated = generatedText.includes("true");
   
       // console.log(`Prompt: ${"customPrompt"}`);
       // console.log(`Prediction: ${generatedText}`);

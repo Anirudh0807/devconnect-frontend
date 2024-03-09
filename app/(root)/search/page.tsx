@@ -23,8 +23,11 @@ const Page = async ({
   const search =
     typeof searchParams.searchTerm === "string" ? searchParams.searchTerm : "";
 
-  const posts = await fetchThreadByTag(search, 1, 25);
-  console.log(posts);
+    let posts: any[] = [];
+
+    if (search) {
+      posts = await fetchThreadByTag(search, 1, 25);
+    }
 
   return (
     <section>

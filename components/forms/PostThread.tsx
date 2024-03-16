@@ -84,7 +84,16 @@ function PostThread({ userId }: Props) {
       console.log(values.tags);
       setLoading(false);
       router.push("/home");
-      showSuccessToast("Post created successfully");
+      showSuccessToast("Post created successfully")
+    } else if (values.tags.length === 0) {
+      setLoading(false);
+      showErrorToast("Please add at least one tag");
+    } else {
+      setLoading(false);
+      showErrorToast(
+        "Content is not developer related, Please make sure you only upload content relavent to development!"
+      );
+      
     }
   };
 

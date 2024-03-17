@@ -4,21 +4,20 @@ import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 async function Page() {
-   const user = await currentUser();
+  const user = await currentUser();
 
-   if (!user) return null;
-   console.log(user);
+  if (!user) return null;
+  console.log(user);
 
   const userInfo = await fetchUser(user.id);
 
-  if(!userInfo?.onboarded) redirect('/onboarding')
+  if (!userInfo?.onboarded) redirect("/onboarding");
 
   return (
     <>
       <h1 className="head-text">Create Post</h1>
 
-      <PostThread 
-      userId={userInfo._id}/>
+      <PostThread userId={userInfo._id} />
     </>
   );
 }
